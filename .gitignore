@@ -1,0 +1,10 @@
+# Build artifacts
+build/
+*.exe
+*.obj
+*.o
+
+# VSCode
+.vscode/
+
+data/*.geojson
