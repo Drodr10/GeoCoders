@@ -1,4 +1,4 @@
-# GeoQuery — Geo-Coders
+# GeoQuery: Geo-Coders
 
 Team: Geo-Coders
 
@@ -12,7 +12,7 @@ Project Title: GeoQuery
 
 ## Short description
 
-GeoQuery is a command-line project blueprint (C++) to build and benchmark two spatial indices — a k-d Tree and a Quadtree — over a large GeoJSON dataset of restaurants. This repository contains the project scaffold and design blueprints; no implementation code is included here.
+GeoQuery is a command-line project blueprint (C++) to build and benchmark two spatial indices, a k-d Tree and a Quadtree, over a large GeoJSON dataset of restaurants. This repository contains the project scaffold and design blueprints; no implementation code is included here.
 
 ## Goals
 
