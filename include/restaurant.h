@@ -10,7 +10,6 @@ struct Restaurant {
     std::string name;
     double longitude;
     double latitude;
-    // Note: polygons will be collapsed to centroid before building indices.
 };
 
 } // namespace geo

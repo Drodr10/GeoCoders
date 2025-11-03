@@ -1,6 +1,3 @@
-// main.cpp (skeleton)
-// NOTE: This file is a placeholder blueprint. Do not add runnable logic here yet.
-
 /*
   Intended responsibilities for `main`:
   - parse command-line args (optional file path)
@@ -14,12 +11,24 @@
  * I'm learning a lot about C++
  * Did you know that:
  * int main(int argc, char** argv) { return 0; }
- * int main(int \/*argc*\/, char** \/*argv*\/) { return 0; } (without backslashes)
  * int main(int, char**) { return 0; }
+ * and the one below
  * are all valid ways to define the main function in C++ if using parameters?
  */
 
+#include "parser.h"
+#include "restaurant.h"
+
+#include <iostream>
+
 int main(int /*argc*/, char** /*argv*/) {
     // TODO: implement main logic
+
+    // This is how to use the parser
+    geo::GeoJSONParser parser; // I could make it static if you want
+    std::vector<geo::Restaurant> restaurants = parser.parse("../data/restaurants.geojson");
+
+    std::cout << "Parsed " << restaurants.size() << " restaurants." << std::endl;
+
     return 0;
 }

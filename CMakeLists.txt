@@ -7,14 +7,11 @@ set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -Werror")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 
-# if including json/hpp from nlohmann
-# Include(FetchContent)
-# FetchContent_Declare(
-#   nlohmann_json
-#   GIT_REPOSITORY https://github.com/nlohmann/json.git
-#   GIT_TAG v3.11.2
-# )
-# FetchContent_MakeAvailable(nlohmann_json)
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 add_executable(geoquery src/main.cpp src/kdtree.cpp src/quadtree.cpp src/parser.cpp src/benchmark.cpp src/cli.cpp)
+
+target_link_libraries(geoquery PRIVATE nlohmann_json::nlohmann_json)
 target_include_directories(geoquery PRIVATE ${PROJECT_SOURCE_DIR}/include)
