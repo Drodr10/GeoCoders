@@ -17,6 +17,7 @@ GeoQuery is a command-line project blueprint (C++) to build and benchmark two sp
 ## Goals
 
 - Parse and store 154,119 restaurants from OSM-derived GeoJSON.
+  - (Discovered that only 149,201 can be parsed)
 - Build a 2D k-d Tree and a Quadtree from the dataset.
 - Support k-nearest neighbors queries for a query coordinate.
 - Compare performance between data structures.
@@ -38,12 +39,12 @@ GeoCoders/
 │  ├─ benchmark.h
 │  └─ cli.h
 ├─ src/
-│  ├─ main.cpp                # program entry (skeleton)
-│  ├─ parser.cpp              # GeoJSON parsing implementation stub
-+│  ├─ kdtree.cpp             # KDTree implementation stub
-│  ├─ quadtree.cpp           # Quadtree implementation stub
-│  ├─ benchmark.cpp          # Benchmark harness stub
-│  └─ cli.cpp                # Command-line UI stub
+│  ├─ main.cpp
+│  ├─ parser.cpp
+│  ├─ kdtree.cpp
+│  ├─ quadtree.cpp
+│  ├─ benchmark.cpp
+│  └─ cli.cpp
 ├─ docs/
 │  ├─ architecture.md
 │  └─ wireframe.md
