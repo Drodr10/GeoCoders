@@ -6,7 +6,7 @@ using json = nlohmann::json;
 
 namespace geo {
 
-std::vector<Restaurant> GeoJSONParser::parse(const std::string& filepath) const {
+GeoJSONParser::Result GeoJSONParser::parse(const std::string& filepath) const {
     std::ifstream file("../data/data.bin"); // this might be dumb but it's the only way I could think of to check if the binary file exists
     if (!file.is_open())
         return GeoJSONParser::parseFromGeoJSON(filepath);
@@ -16,11 +16,16 @@ std::vector<Restaurant> GeoJSONParser::parse(const std::string& filepath) const 
     }
 }
 
-std::vector<Restaurant> GeoJSONParser::parseFromGeoJSON(const std::string& filepath) const {
+GeoJSONParser::Result GeoJSONParser::parseFromGeoJSON(const std::string& filepath) const {
     std::ifstream file(filepath);
     if (!file.is_open()) {
         throw std::runtime_error("Could not open file: " + filepath);
     }
+
+    double min_lat = 90.0;
+    double max_lat = -90.0;
+    double min_long = 180.0;
+    double max_long = -180.0;
 
     json data = json::parse(file);
 
@@ -63,17 +68,27 @@ std::vector<Restaurant> GeoJSONParser::parseFromGeoJSON(const std::string& filep
         else
             continue;
 
+        min_lat = std::min(min_lat, restaurant.latitude);
+        max_lat = std::max(max_lat, restaurant.latitude);
+        min_long = std::min(min_long, restaurant.longitude);
+        max_long = std::max(max_long, restaurant.longitude);
+
         restaurants.push_back(restaurant);
     }
 
     file.close();
 
-    GeoJSONParser::serializeToBinary(restaurants);
-
-    return restaurants;
+    GeoJSONParser::serializeToBinary(restaurants, min_lat, max_lat, min_long, max_long);
+    Result result;
+    result.restaurants = restaurants;
+    result.min_lat = min_lat;
+    result.max_lat = max_lat;
+    result.min_long = min_long;
+    result.max_long = max_long;
+    return result;
 }
 
-    void GeoJSONParser::serializeToBinary(const std::vector<Restaurant>& restaurants) const {
+    void GeoJSONParser::serializeToBinary(const std::vector<Restaurant>& restaurants, double min_lat, double max_lat, double min_long, double max_long) const {
         std::ofstream file("../data/data.bin", std::ios::binary);
         if (!file.is_open()) {
             throw std::runtime_error("Could not open file for writing: ../data/data.bin");
@@ -94,10 +109,15 @@ std::vector<Restaurant> GeoJSONParser::parseFromGeoJSON(const std::string& filep
             file.write(reinterpret_cast<const char*>(&restaurant.latitude), sizeof(restaurant.latitude));
         }
 
+        file.write(reinterpret_cast<const char*>(&min_lat), sizeof(min_lat));
+        file.write(reinterpret_cast<const char*>(&max_lat), sizeof(max_lat));
+        file.write(reinterpret_cast<const char*>(&min_long), sizeof(min_long));
+        file.write(reinterpret_cast<const char*>(&max_long), sizeof(max_long));
+
         file.close();
     }
 
-    std::vector<Restaurant> GeoJSONParser::deserializeFromBinary() const {
+    GeoJSONParser::Result GeoJSONParser::deserializeFromBinary() const {
         std::ifstream file("../data/data.bin", std::ios::binary);
         if (!file.is_open()) {
             throw std::runtime_error("Could not open file for reading: ../data/data.bin\nThis should never happen, either something is terribly wrong, or you called the wrong function.");
@@ -120,8 +140,21 @@ std::vector<Restaurant> GeoJSONParser::parseFromGeoJSON(const std::string& filep
             file.read(reinterpret_cast<char*>(&restaurant.latitude), sizeof(restaurant.latitude));
         }
 
+        double min_lat, max_lat, min_long, max_long;
+        file.read(reinterpret_cast<char*>(&min_lat), sizeof(min_lat));
+        file.read(reinterpret_cast<char*>(&max_lat), sizeof(max_lat));
+        file.read(reinterpret_cast<char*>(&min_long), sizeof(min_long));
+        file.read(reinterpret_cast<char*>(&max_long), sizeof(max_long));
+
         file.close();
-        return restaurants;
+        Result result;
+        result.restaurants = restaurants;
+        result.min_lat = min_lat;
+        result.max_lat = max_lat;
+        result.min_long = min_long;
+        result.max_long = max_long;
+        
+        return result;
     }
 
 

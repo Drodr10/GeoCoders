@@ -9,15 +9,24 @@
 namespace geo {
 
 class GeoJSONParser {
-    std::vector<Restaurant> parseFromGeoJSON(const std::string& filepath) const;
-
-    void serializeToBinary(const std::vector<Restaurant>& restaurants) const;
-    std::vector<Restaurant> deserializeFromBinary() const;
-
 public:
+    struct Result {
+        std::vector<Restaurant> restaurants;
+        double min_lat;
+        double max_lat;
+        double min_long;
+        double max_long;
+    };
+
     GeoJSONParser() = default;
 
-    std::vector<Restaurant> parse(const std::string& filepath) const;
+    Result parse(const std::string& filepath) const;
+    
+private:
+    Result parseFromGeoJSON(const std::string& filepath) const;
+
+    void serializeToBinary(const std::vector<Restaurant>& restaurants, double min_lat, double max_lat, double min_long, double max_long) const;
+    Result deserializeFromBinary() const;
 };
 
 } // namespace geo
