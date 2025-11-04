@@ -17,7 +17,8 @@
  */
 
 #include "parser.h"
-#include "restaurant.h"
+#include "quadtree.h"
+#include "kdtree.h"
 
 #include <iostream>
 
@@ -26,9 +27,21 @@ int main(int /*argc*/, char** /*argv*/) {
 
     // This is how to use the parser
     geo::GeoJSONParser parser; // I could make it static if you want
-    std::vector<geo::Restaurant> restaurants = parser.parse("../data/restaurants.geojson");
+    geo::GeoJSONParser::Result result = parser.parse("../data/restaurants.geojson");
 
-    std::cout << "Parsed " << restaurants.size() << " restaurants." << std::endl;
+    if (result.restaurants.size() > 0) {
+        std::cout << "Parsed " << result.restaurants.size() << " restaurants." << std::endl;
+    } else {
+        std::cerr << "Failed to parse restaurants." << std::endl;
+    }
+
+    geo::Quadtree quadtree(result.restaurants, result.min_lat, result.max_lat, result.min_long, result.max_long);
+    std::cout << "Quadtree built." << std::endl;
+    auto knn_results = quadtree.knn(38.578584, -121.548289, 5); // Example: query 5 nearest neighbors to Sacramento coordinates
+    std::cout << "5 nearest restaurants to (38.578584, -121.548289):" << std::endl;
+    for (const auto& [dist, restaurant] : knn_results) {
+        std::cout << "Restaurant: " << restaurant.name << ", Distance: " << dist << " miles" << std::endl;
+    }
 
     return 0;
 }
