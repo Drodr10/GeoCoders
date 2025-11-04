@@ -8,12 +8,11 @@ namespace geo {
 
 // Abstract interface for spatial indices used by GeoQuery.
 class SpatialIndex {
-public:
-// If you know java, this is just an interface. Subclasses must implement the methods.
-    virtual ~SpatialIndex() = default; 
-
-    // Build the index from a vector of restaurants.
+    // Build the index from a vector of restaurants. Called by constructor.
     virtual void build(const std::vector<Restaurant>& points) = 0;
+
+public:
+    virtual ~SpatialIndex() = default;
 
     // Find k nearest restaurants to the query point (lat, lon).
     // Returns a vector of pairs (distance, Restaurant). Distance uses Euclidean or haversine.
