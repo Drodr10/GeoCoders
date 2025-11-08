@@ -1,20 +1,27 @@
-// benchmark.cpp — implementation skeleton for Benchmark
-// Provides a minimal stub for the Benchmark::run() method. Replace with real timing logic
-// when implementing the benchmarking harness.
-
 #include "benchmark.h"
+#include <chrono>
 
 namespace geo {
 
 Benchmark::Result Benchmark::run(const std::string& name, SpatialIndex& index, const std::vector<Restaurant>& data,
                                  double qlat, double qlon, std::size_t k) const {
-    // TODO: implement measurement of build time and query time.
-    (void)index; (void)data; (void)qlat; (void)qlon; (void)k;
-
     Result r;
     r.name = name;
-    r.build_time = std::chrono::microseconds{0};
-    r.query_time = std::chrono::microseconds{0};
+
+    auto build_start = std::chrono::high_resolution_clock::now();
+    // The `build` method is now part of the SpatialIndex interface, but it's called by the constructor in Quadtree.
+    // To keep the benchmark consistent, we will time the build process outside for both.
+    if (name == "k-d Tree") {
+        index.build(data);
+    }
+    auto build_end = std::chrono::high_resolution_clock::now();
+    r.build_time = std::chrono::duration_cast<std::chrono::milliseconds>(build_end - build_start);
+
+    auto query_start = std::chrono::high_resolution_clock::now();
+    index.knn(qlat, qlon, k);
+    auto query_end = std::chrono::high_resolution_clock::now();
+    r.query_time = std::chrono::duration_cast<std::chrono::microseconds>(query_end - query_start);
+
     return r;
 }
 

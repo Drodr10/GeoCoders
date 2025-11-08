@@ -1,62 +1,41 @@
-/*
-  Intended responsibilities for `main`:
-  - parse command-line args (optional file path)
-  - call GeoJSONParser::parse to load data
-  - build KDTree and Quadtree (measure build times)
-  - present CLI menu (use CLI class)
-  - run benchmarks and print results
-*/
-
-/**
- * I'm learning a lot about C++
- * Did you know that:
- * int main(int argc, char** argv) { return 0; }
- * int main(int, char**) { return 0; }
- * and the one below
- * are all valid ways to define the main function in C++ if using parameters?
- */
-
+#include "cli.h"
 #include "parser.h"
 #include "quadtree.h"
 #include "kdtree.h"
+#include "benchmark.h"
 
 #include <iostream>
+#include <chrono>
 
 int main(int /*argc*/, char** /*argv*/) {
-    // TODO: implement main logic
-
-    // This is how to use the parser
-    geo::GeoJSONParser parser; // I could make it static if you want
+    geo::GeoJSONParser parser;
     geo::GeoJSONParser::Result result = parser.parse("../data/restaurants.geojson");
 
-    if (result.restaurants.size() > 0) {
-        std::cout << "Parsed " << result.restaurants.size() << " restaurants." << std::endl;
-    } else {
+    if (result.restaurants.empty()) {
         std::cerr << "Failed to parse restaurants." << std::endl;
+        return 1;
     }
 
-    geo::Quadtree quadtree(result.restaurants, result.min_lat, result.max_lat, result.min_long, result.max_long);
-    std::cout << "Quadtree built." << std::endl;
-    auto knn_results = quadtree.knn(38.578584, -121.548289, 5); // Example: query 5 nearest neighbors to Sacramento coordinates
-    std::cout << "5 nearest restaurants to (38.578584, -121.548289):" << std::endl;
-    for (const auto& [dist, restaurant] : knn_results) {
-        std::cout << "Restaurant: " << restaurant.name << ", Distance: " << dist << " miles" << std::endl;
-    }
+    std::cout << "Loading restaurant data from file..." << std::endl;
+    std::cout << "Successfully parsed and loaded " << result.restaurants.size() << " restaurants into memory." << std::endl;
 
-    //KD tree test
+    auto start_kd = std::chrono::high_resolution_clock::now();
     geo::KDTree kdtree;
     kdtree.build(result.restaurants);
-    std::cout << "KDTree built." << std::endl;
+    auto end_kd = std::chrono::high_resolution_clock::now();
+    auto kd_build_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_kd - start_kd);
 
-    auto kd_knn_results = kdtree.knnSearch(38.578584, -121.548289, 5);
-    std::cout << "5 nearest restaurants to (38.578584, -121.548289):" << std::endl;
-    for (const auto& pair : kd_knn_results) {
-        const double dist = pair.first;
-        const geo::Restaurant& restaurant = pair.second;
-        std::cout << "Restaurant: " << restaurant.name
-                  << ", Distance: " << dist << " miles" << std::endl;
-    }
+    std::cout << "Building k-d tree... Done. (Time: " << kd_build_time.count() << " ms)" << std::endl;
 
+    auto start_quad = std::chrono::high_resolution_clock::now();
+    geo::Quadtree quadtree(result.restaurants, result.min_lat, result.max_lat, result.min_long, result.max_long);
+    auto end_quad = std::chrono::high_resolution_clock::now();
+    auto quad_build_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_quad - start_quad);
+
+    std::cout << "Building Quadtree... Done. (Time: " << quad_build_time.count() << " ms)" << std::endl;
+
+    geo::CLI cli(kdtree, quadtree, result.restaurants);
+    cli.run();
 
     return 0;
 }

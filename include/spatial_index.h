@@ -9,9 +9,8 @@ namespace geo {
 // Abstract interface for spatial indices used by GeoQuery.
 class SpatialIndex {
     // Build the index from a vector of restaurants. Called by constructor.
-    virtual void build(const std::vector<Restaurant>& points) = 0;
-
 public:
+    virtual void build(const std::vector<Restaurant>& points) = 0;
     virtual ~SpatialIndex() = default;
 
     // Find k nearest restaurants to the query point (lat, lon).
