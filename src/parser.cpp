@@ -7,7 +7,7 @@ using json = nlohmann::json;
 namespace geo {
 
 GeoJSONParser::Result GeoJSONParser::parse(const std::string& filepath) const {
-    std::ifstream file("../data/data.bin"); // this might be dumb but it's the only way I could think of to check if the binary file exists
+    std::ifstream file("../data/data.bin");
     if (!file.is_open())
         return GeoJSONParser::parseFromGeoJSON(filepath);
     else{

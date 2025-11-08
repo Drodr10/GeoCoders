@@ -6,7 +6,7 @@
 namespace geo {
 
 struct Restaurant {
-    std::int64_t osm_id; // OSM id
+    std::int64_t osm_id;
     std::string name;
     double longitude;
     double latitude;
