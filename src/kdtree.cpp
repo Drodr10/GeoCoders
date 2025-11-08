@@ -16,6 +16,10 @@ struct KDTree::Node {
     std::unique_ptr<Node> right;
 };
 
+std::vector<std::pair<double, Restaurant>>
+geo::KDTree::knn(double latitude, double longitude, std::size_t k) const {
+    return knnSearch(latitude, longitude, k);
+}
 
 // Playbook for std::sort, used to compare values.
 static bool compareLat(const Restaurant& a, const Restaurant& b) {
@@ -71,7 +75,7 @@ std::unique_ptr<KDTree::Node> KDTree::buildNode(std::vector<Restaurant>& points,
 std::vector<std::pair<double, Restaurant>> KDTree::knnSearch(double latitude,
                                                        double longitude,
                                                        std::size_t k) const {
-    std::vector<std::pair<double, Restaurant>> result;
+    std::vector<std::pair<double, Restaurant>> result; //vector of the restaurant nodes that need to be returned.
 
     if (!root_ || k == 0) {
         return result;
@@ -80,6 +84,7 @@ std::vector<std::pair<double, Restaurant>> KDTree::knnSearch(double latitude,
     // Max-heap: top() has largest distance so far
     std::priority_queue<std::pair<double, const Restaurant*>> pq;
 
+    //recursive knn search
     knnRecur(root_.get(), latitude, longitude, k, pq);
 
     // Convert heap to result vector with real (haversine) distances
@@ -90,7 +95,7 @@ std::vector<std::pair<double, Restaurant>> KDTree::knnSearch(double latitude,
         pq.pop();
     }
 
-    std::reverse(result.begin(), result.end()); // closest first
+    std::reverse(result.begin(), result.end()); // sort the heap so that it is in order based on distance.
     return result;
 }
 
@@ -104,20 +109,22 @@ void KDTree::knnRecur(const Node* node,
         return;
     }
 
-    // 1. Visit this node's point
+    // 1. Visit this node's point - calculate distance to determine which direction we need to go.
     double d2 = distanceSquared(latitude, longitude,
                                 node->point.latitude, node->point.longitude);
 
+    //If size less than k, add. If size greater than k
     if (pq.size() < k) {
         pq.push(std::make_pair(d2, &node->point));
-    } else if (d2 < pq.top().first) {
+    }
+    else if (d2 < pq.top().first) {
         pq.pop();
         pq.push(std::make_pair(d2, &node->point));
     }
 
     // 2. Decide which side to visit first
-    double queryCoord;
-    double nodeCoord;
+    double queryCoord; //coordinate of point that is given
+    double nodeCoord; //coordinate of the node in question
 
     if (node->axis == 0) {
         queryCoord = latitude;
@@ -131,10 +138,10 @@ void KDTree::knnRecur(const Node* node,
     const Node* secondChild;
 
     if (queryCoord < nodeCoord) {
-        firstChild = node->left.get();
+        firstChild = node->left.get(); //need to go smaller so go left
         secondChild = node->right.get();
     } else {
-        firstChild = node->right.get();
+        firstChild = node->right.get(); //need to go higher so go right
         secondChild = node->left.get();
     }
 
@@ -145,12 +152,13 @@ void KDTree::knnRecur(const Node* node,
     double diff = queryCoord - nodeCoord;
     double diff2 = diff * diff;
 
-    if (pq.size() < k || diff2 < pq.top().first) {
+    //checks farther child.
+    if (pq.size() < k || diff2 < pq.top().first) { //checks for whether we have our k restaurants, and secondly, whether the difference of the node is less than the farthest distance on the queue.
         knnRecur(secondChild, latitude, longitude, k, pq);
     }
 }
 
-// Simple squared Euclidean distance (for pruning only)
+// Simple squared Euclidean distance - square root not needed currently.
 double KDTree::distanceSquared(double lat1, double lon1,
                                double lat2, double lon2) const {
     double dlat = lat1 - lat2;
@@ -158,7 +166,7 @@ double KDTree::distanceSquared(double lat1, double lon1,
     return dlat * dlat + dlon * dlon;
 }
 
-// Same haversine formula as in Quadtree
+// Same haversine formula as in Quadtree.cpp - used to convert to distances that are usable.
 double KDTree::haversine(double lat1, double lon1,
                          double lat2, double lon2) const {
     const double R = 3958.8; // miles

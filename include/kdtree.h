@@ -18,8 +18,11 @@ public:
     // Build tree from points
     void build(const std::vector<Restaurant>& points) override;
 
+    std::vector<std::pair<double, Restaurant>>
+    knn(double latitude, double longitude, std::size_t k) const override;
+
     // k-nearest neighbors - starting the search algorithm
-    std::vector<std::pair<double, Restaurant>> knnSearch(double latitude, double longitude, std::size_t k) const override;
+    std::vector<std::pair<double, Restaurant>> knnSearch(double latitude, double longitude, std::size_t k) const;
 
 private:
     std::unique_ptr<Node> root_; //the first node in the tree.

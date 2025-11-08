@@ -43,5 +43,20 @@ int main(int /*argc*/, char** /*argv*/) {
         std::cout << "Restaurant: " << restaurant.name << ", Distance: " << dist << " miles" << std::endl;
     }
 
+    //KD tree test
+    geo::KDTree kdtree;
+    kdtree.build(result.restaurants);
+    std::cout << "KDTree built." << std::endl;
+
+    auto kd_knn_results = kdtree.knnSearch(38.578584, -121.548289, 5);
+    std::cout << "5 nearest restaurants to (38.578584, -121.548289):" << std::endl;
+    for (const auto& pair : kd_knn_results) {
+        const double dist = pair.first;
+        const geo::Restaurant& restaurant = pair.second;
+        std::cout << "Restaurant: " << restaurant.name
+                  << ", Distance: " << dist << " miles" << std::endl;
+    }
+
+
     return 0;
 }
