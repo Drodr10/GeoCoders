@@ -1,7 +1,7 @@
 # Data
 
-Place your GeoJSON data files in the `data/` directory. The dataset used for this project is a filtered Overpass/OSM export for 10 Western US states containing 154,119 entries.
+Place your GeoJSON data files in this `data/` directory. The dataset used for this project is a filtered Overpass/OSM export for 10 Western US states containing 154,119 (149,201 valid) entries.
 
-Notes:
+A sample data query for all resturaunts in California can be found [in this site](https://overpass-turbo.eu/s/2dqL).
 
-- The parser should accept a file path or default to `data/restaurants.geojson`.
+Note: The parser defaults to `data/restaurants.geojson`, but can be changed in line 12 of [main.cpp](../src/main.cpp).
