@@ -5,8 +5,8 @@
 
 namespace geo {
 
-CLI::CLI(const KDTree& kdtree, const Quadtree& quadtree, const std::vector<Restaurant>& restaurants)
-    : kdtree_(kdtree), quadtree_(quadtree), restaurants_(restaurants) {}
+CLI::CLI(const KDTree& kdtree, const Quadtree& quadtree, const geo::GeoJSONParser::Result result)
+    : kdtree_(kdtree), quadtree_(quadtree), result_(result) {}
 
 void CLI::run() {
     while (true) {
@@ -89,19 +89,19 @@ void CLI::run_benchmark() {
     
     // Non-const copies needed for benchmark
     KDTree kd_copy;
-    Quadtree quad_copy(restaurants_, 0, 0, 0, 0);
+    Quadtree quad_copy(result_.restaurants, result_.min_lat, result_.max_lat, result_.min_long, result_.max_long);
 
 
-    Benchmark::Result kd_result = benchmark.run("k-d Tree", kd_copy, restaurants_, lat, lon, k);
-    Benchmark::Result quad_result = benchmark.run("Quadtree", quad_copy, restaurants_, lat, lon, k);
+    Benchmark::Result kd_result = benchmark.run(kd_copy, result_.restaurants, lat, lon, k);
+    Benchmark::Result quad_result = benchmark.run(quad_copy, result_.restaurants, lat, lon, k);
 
     std::cout << "Benchmark Results (" << k << "-NN query at " << lat << ", " << lon << "):" << std::endl;
     std::cout << "  k-d Tree:" << std::endl;
     std::cout << "    Build Time: " << kd_result.build_time.count() << " ms" << std::endl;
-    std::cout << "    Query Time: " << kd_result.query_time.count() << " us" << std::endl;
+    std::cout << "    Query Time: " << kd_result.query_time.count() << " μs" << std::endl;
     std::cout << "  Quadtree:" << std::endl;
     std::cout << "    Build Time: " << quad_result.build_time.count() << " ms" << std::endl;
-    std::cout << "    Query Time: " << quad_result.query_time.count() << " us" << std::endl;
+    std::cout << "    Query Time: " << quad_result.query_time.count() << " μs" << std::endl;
 }
 
 std::string CLI::prompt(const std::string& msg) const {

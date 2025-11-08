@@ -29,12 +29,13 @@ int main(int /*argc*/, char** /*argv*/) {
 
     auto start_quad = std::chrono::high_resolution_clock::now();
     geo::Quadtree quadtree(result.restaurants, result.min_lat, result.max_lat, result.min_long, result.max_long);
+    quadtree.build(result.restaurants);
     auto end_quad = std::chrono::high_resolution_clock::now();
     auto quad_build_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_quad - start_quad);
 
     std::cout << "Building Quadtree... Done. (Time: " << quad_build_time.count() << " ms)" << std::endl;
 
-    geo::CLI cli(kdtree, quadtree, result.restaurants);
+    geo::CLI cli(kdtree, quadtree, result);
     cli.run();
 
     return 0;

@@ -24,14 +24,12 @@ Quadtree::Quadtree(const std::vector<Restaurant>& points, double min_lat, double
     root_->max_lat = max_lat;
     root_->min_long = min_long;
     root_->max_long = max_long;
-
-    build(points);
 }
 
 Quadtree::~Quadtree() = default;
 
 void Quadtree::build(const std::vector<Restaurant>& points) {
-    if(!root_)
+    if (!root_) 
         return;
 
     for (const auto& restaurant : points) {
