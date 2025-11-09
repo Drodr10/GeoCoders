@@ -88,75 +88,73 @@ GeoJSONParser::Result GeoJSONParser::parseFromGeoJSON(const std::string& filepat
     return result;
 }
 
-    void GeoJSONParser::serializeToBinary(const std::vector<Restaurant>& restaurants, double min_lat, double max_lat, double min_long, double max_long) const {
-        std::ofstream file("../data/data.bin", std::ios::binary);
-        if (!file.is_open()) {
-            throw std::runtime_error("Could not open file for writing: ../data/data.bin");
-        }
-
-        size_t size = restaurants.size();
-        // the cast basically converts the address of size to a pointer to a char (byte)
-        file.write(reinterpret_cast<const char*>(&size), sizeof(size));
-
-        for (const auto& restaurant : restaurants) {
-            file.write(reinterpret_cast<const char*>(&restaurant.osm_id), sizeof(restaurant.osm_id));
-
-            size_t name_length = restaurant.name.size();
-            file.write(reinterpret_cast<const char*>(&name_length), sizeof(name_length));
-            file.write(restaurant.name.c_str(), name_length);
-
-            file.write(reinterpret_cast<const char*>(&restaurant.longitude), sizeof(restaurant.longitude));
-            file.write(reinterpret_cast<const char*>(&restaurant.latitude), sizeof(restaurant.latitude));
-        }
-
-        file.write(reinterpret_cast<const char*>(&min_lat), sizeof(min_lat));
-        file.write(reinterpret_cast<const char*>(&max_lat), sizeof(max_lat));
-        file.write(reinterpret_cast<const char*>(&min_long), sizeof(min_long));
-        file.write(reinterpret_cast<const char*>(&max_long), sizeof(max_long));
-
-        file.close();
+void GeoJSONParser::serializeToBinary(const std::vector<Restaurant>& restaurants, double min_lat, double max_lat, double min_long, double max_long) const {
+    std::ofstream file("../data/data.bin", std::ios::binary);
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file for writing: ../data/data.bin");
     }
 
-    GeoJSONParser::Result GeoJSONParser::deserializeFromBinary() const {
-        std::ifstream file("../data/data.bin", std::ios::binary);
-        if (!file.is_open()) {
-            throw std::runtime_error("Could not open file for reading: ../data/data.bin\nThis should never happen, either something is terribly wrong, or you called the wrong function.");
-        }
+    size_t size = restaurants.size();
+    // the cast basically converts the address of size to a pointer to a char (byte)
+    file.write(reinterpret_cast<const char*>(&size), sizeof(size));
 
-        size_t size;
-        file.read(reinterpret_cast<char*>(&size), sizeof(size));
+    for (const auto& restaurant : restaurants) {
+        file.write(reinterpret_cast<const char*>(&restaurant.osm_id), sizeof(restaurant.osm_id));
 
-        // First allocate the memory (well, technically it wouldn't know how much to allocate since it can hold variable-length strings)
-        std::vector<Restaurant> restaurants(size);
-        for (auto& restaurant : restaurants) {
-            file.read(reinterpret_cast<char*>(&restaurant.osm_id), sizeof(restaurant.osm_id));
+        size_t name_length = restaurant.name.size();
+        file.write(reinterpret_cast<const char*>(&name_length), sizeof(name_length));
+        file.write(restaurant.name.c_str(), name_length);
 
-            size_t name_length;
-            file.read(reinterpret_cast<char*>(&name_length), sizeof(name_length));
-            restaurant.name.resize(name_length);
-            file.read(&restaurant.name[0], name_length);
-
-            file.read(reinterpret_cast<char*>(&restaurant.longitude), sizeof(restaurant.longitude));
-            file.read(reinterpret_cast<char*>(&restaurant.latitude), sizeof(restaurant.latitude));
-        }
-
-        double min_lat, max_lat, min_long, max_long;
-        file.read(reinterpret_cast<char*>(&min_lat), sizeof(min_lat));
-        file.read(reinterpret_cast<char*>(&max_lat), sizeof(max_lat));
-        file.read(reinterpret_cast<char*>(&min_long), sizeof(min_long));
-        file.read(reinterpret_cast<char*>(&max_long), sizeof(max_long));
-
-        file.close();
-        Result result;
-        result.restaurants = restaurants;
-        result.min_lat = min_lat;
-        result.max_lat = max_lat;
-        result.min_long = min_long;
-        result.max_long = max_long;
-        
-        return result;
+        file.write(reinterpret_cast<const char*>(&restaurant.longitude), sizeof(restaurant.longitude));
+        file.write(reinterpret_cast<const char*>(&restaurant.latitude), sizeof(restaurant.latitude));
     }
 
+    file.write(reinterpret_cast<const char*>(&min_lat), sizeof(min_lat));
+    file.write(reinterpret_cast<const char*>(&max_lat), sizeof(max_lat));
+    file.write(reinterpret_cast<const char*>(&min_long), sizeof(min_long));
+    file.write(reinterpret_cast<const char*>(&max_long), sizeof(max_long));
 
+    file.close();
+}
+
+GeoJSONParser::Result GeoJSONParser::deserializeFromBinary() const {
+    std::ifstream file("../data/data.bin", std::ios::binary);
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file for reading: ../data/data.bin\nThis should never happen, either something is terribly wrong, or you called the wrong function.");
+    }
+
+    size_t size;
+    file.read(reinterpret_cast<char*>(&size), sizeof(size));
+
+    // First allocate the memory (well, technically it wouldn't know how much to allocate since it can hold variable-length strings)
+    std::vector<Restaurant> restaurants(size);
+    for (auto& restaurant : restaurants) {
+        file.read(reinterpret_cast<char*>(&restaurant.osm_id), sizeof(restaurant.osm_id));
+
+        size_t name_length;
+        file.read(reinterpret_cast<char*>(&name_length), sizeof(name_length));
+        restaurant.name.resize(name_length);
+        file.read(&restaurant.name[0], name_length);
+
+        file.read(reinterpret_cast<char*>(&restaurant.longitude), sizeof(restaurant.longitude));
+        file.read(reinterpret_cast<char*>(&restaurant.latitude), sizeof(restaurant.latitude));
+    }
+
+    double min_lat, max_lat, min_long, max_long;
+    file.read(reinterpret_cast<char*>(&min_lat), sizeof(min_lat));
+    file.read(reinterpret_cast<char*>(&max_lat), sizeof(max_lat));
+    file.read(reinterpret_cast<char*>(&min_long), sizeof(min_long));
+    file.read(reinterpret_cast<char*>(&max_long), sizeof(max_long));
+
+    file.close();
+    Result result;
+    result.restaurants = restaurants;
+    result.min_lat = min_lat;
+    result.max_lat = max_lat;
+    result.min_long = min_long;
+    result.max_long = max_long;
+    
+    return result;
+}
 
 } // namespace geo

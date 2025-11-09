@@ -3,9 +3,9 @@
 #include <vector>
 #include <memory>
 #include <queue>
-#include <cmath>
 #include <algorithm>
 
+#include "distance.h"
 #include "restaurant.h"
 #include "spatial_index.h"
 
@@ -36,8 +36,6 @@ private:
                    std::priority_queue<std::pair<double, Restaurant>>& pq) const;
 
     double minDistanceSquared(const double latitude, const double longitude, const Quadtree::Node& node) const;
-    // Used only for final distance calculation on k-NN results (slow but accurate)
-    double haversine(const double lat1, const double lon1, const double lat2, const double lon2) const;
 };
 
 } // namespace geo

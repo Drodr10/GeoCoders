@@ -3,12 +3,13 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <iomanip>
 #include "restaurant.h"
 #include "spatial_index.h"
 
 namespace geo {
 
-// Lightweight benchmarking harness blueprint.
 class Benchmark {
 public:
     // Struct to hold the aggregated results for one tree type

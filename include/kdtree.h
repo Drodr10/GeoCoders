@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 #include <queue>
+#include <algorithm>
+#include "distance.h"
 #include "restaurant.h"
 #include "spatial_index.h"
 
@@ -42,10 +44,6 @@ private:
 
     double distanceSquared(double lat1, double lon1,
                            double lat2, double lon2) const;
-
-    // Used only for final distance calculation - basically converting to miles for the user.
-    double haversine(double lat1, double lon1,
-                     double lat2, double lon2) const;
 };
 
 

@@ -1,10 +1,6 @@
-// kdtree.cpp — implementation skeleton for KDTree
-// This file provides function stubs and minimal definitions. Implementations are TODO.
-
 #include "kdtree.h"
 
-#include <algorithm>
-#include <cmath>
+
 
 namespace geo {
 
@@ -90,7 +86,7 @@ std::vector<std::pair<double, Restaurant>> KDTree::knnSearch(double latitude,
     // Convert heap to result vector with real (haversine) distances
     while (!pq.empty()) {
         const Restaurant* r = pq.top().second;
-        double d = haversine(latitude, longitude, r->latitude, r->longitude);
+        double d = Distance::haversine(latitude, longitude, r->latitude, r->longitude);
         result.push_back(std::make_pair(d, *r));
         pq.pop();
     }
@@ -164,24 +160,6 @@ double KDTree::distanceSquared(double lat1, double lon1,
     double dlat = lat1 - lat2;
     double dlon = lon1 - lon2;
     return dlat * dlat + dlon * dlon;
-}
-
-// Same haversine formula as in Quadtree.cpp - used to convert to distances that are usable.
-double KDTree::haversine(double lat1, double lon1,
-                         double lat2, double lon2) const {
-    const double R = 3958.8; // miles
-
-    double phi1 = lat1 * M_PI / 180.0;
-    double phi2 = lat2 * M_PI / 180.0;
-    double delta_phi = (lat2 - lat1) * M_PI / 180.0;
-    double delta_lambda = (lon2 - lon1) * M_PI / 180.0;
-
-    double a = std::sin(delta_phi / 2) * std::sin(delta_phi / 2) +
-               std::cos(phi1) * std::cos(phi2) *
-               std::sin(delta_lambda / 2) * std::sin(delta_lambda / 2);
-
-    double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
-    return R * c;
 }
 
 } // namespace geo

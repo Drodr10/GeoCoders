@@ -1,5 +1,5 @@
 #include "quadtree.h"
-#include <iostream> // Temporary for debugging
+
 namespace geo {
 
 const int NODE_CAP = 4;
@@ -41,10 +41,8 @@ void Quadtree::insert(const Restaurant& restaurant, Node* node) {
     Node* current = node;
 
     while(current) {
-        if (!inBoundingBox(restaurant, *current)) {
-            std::cerr << "Error: Point out of bounds!" << std::endl;
+        if (!inBoundingBox(restaurant, *current))
             return;
-        }
 
         double mid_lat = (current->min_lat + current->max_lat) / 2;
         double mid_long = (current->min_long + current->max_long) / 2;
@@ -76,10 +74,8 @@ void Quadtree::insert(const Restaurant& restaurant, Node* node) {
 }
 
 void Quadtree::subdivide(Node* node) {
-    if (node->nw) {
-        std::cerr << "Error: Node already subdivided!" << std::endl;
+    if (node->nw)
         return;
-    }
 
     double mid_lat = (node->min_lat + node->max_lat) / 2;
     double mid_long = (node->min_long + node->max_long) / 2;
@@ -128,7 +124,7 @@ std::vector<std::pair<double, Restaurant>> Quadtree::knn(const double latitude, 
     while (!pq.empty()) {
         auto top = pq.top();
         pq.pop();
-        double dist = haversine(latitude, longitude, top.second.latitude, top.second.longitude);
+        double dist = Distance::haversine(latitude, longitude, top.second.latitude, top.second.longitude);
         result.emplace_back(dist, top.second);
     }
 
@@ -197,23 +193,6 @@ double Quadtree::minDistanceSquared(const double latitude, const double longitud
         dlon = longitude - node.max_long;
 
     return dlat * dlat + dlon * dlon;
-}
-
-double Quadtree::haversine(const double lat1, const double lon1, const double lat2, const double lon2) const {
-    const double R = 3958.8;
-    // Convert degrees to radians
-    double phi1 = lat1 * M_PI / 180.0;
-    double phi2 = lat2 * M_PI / 180.0;
-    double delta_phi = (lat2 - lat1) * M_PI / 180.0;
-    double delta_lambda = (lon2 - lon1) * M_PI / 180.0;
-
-    double a = sin(delta_phi / 2) * sin(delta_phi / 2) +
-               cos(phi1) * cos(phi2) *
-               sin(delta_lambda / 2) * sin(delta_lambda / 2);
-    // Using atan2 instead of asin since it's apparently more stable globally
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    return R * c; // Distance in miles (multiply by 5280 in cli if you want feet)
 }
 
 } // namespace geo

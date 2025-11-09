@@ -2,10 +2,6 @@
 #include "kdtree.h"
 #include "quadtree.h"
 #include "parser.h"
-#include <iostream>
-#include <vector>
-#include <iomanip>
-
 namespace geo {
 
 void Benchmark::run_suite(const std::vector<Restaurant>& data) {
@@ -76,11 +72,11 @@ void Benchmark::run_suite(const std::vector<Restaurant>& data) {
     // Print average results
     std::cout << "k-d Tree Averages:" << std::endl;
     std::cout << "  Avg. Build Time: " << kd_results.avg_build_time().count() << " ms" << std::endl;
-    std::cout << "  Avg. Query Time: " << kd_results.avg_query_time().count() << " μs" << std::endl;
+    std::cout << "  Avg. Query Time: " << kd_results.avg_query_time().count() << " microseconds" << std::endl;
 
     std::cout << "\nQuadtree Averages:" << std::endl;
     std::cout << "  Avg. Build Time: " << quad_results.avg_build_time().count() << " ms" << std::endl;
-    std::cout << "  Avg. Query Time: " << quad_results.avg_query_time().count() << " μs" << std::endl;
+    std::cout << "  Avg. Query Time: " << quad_results.avg_query_time().count() << " microseconds" << std::endl;
 
     // Calculate and print comparative analysis
     double build_factor = 0.0;
