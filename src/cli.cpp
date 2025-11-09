@@ -83,7 +83,7 @@ void CLI::run_benchmark() {
     Benchmark benchmark;
     std::cout << "\nRunning performance comparison benchmark suite..." << std::endl;
     benchmark.run_suite(result_.restaurants);
-    benchmark.run_parser_benchmark("data/restaurants.geojson");
+    benchmark.run_parser_benchmark("../data/restaurants.geojson");
 }
 
 std::string CLI::prompt(const std::string& msg) const {

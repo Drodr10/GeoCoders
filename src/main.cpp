@@ -10,7 +10,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     std::cout << "Parsing GeoJSON data..." << std::endl;
     geo::GeoJSONParser parser;
-    auto result = parser.parse("data/restaurants.geojson");
+    auto result = parser.parse("../data/restaurants.geojson");
 
     if (result.restaurants.empty()) {
         std::cerr << "Failed to parse GeoJSON or no data found." << std::endl;
