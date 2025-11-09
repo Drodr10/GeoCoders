@@ -30,7 +30,7 @@ public:
     void run_suite(const std::vector<Restaurant>& data);
 
     // Runs a benchmark comparing parsing times of raw (GeoJSON) vs binary formats
-    void run_parser_benchmark(const std::string& geojson_path, const std::string& binary_path);
+    void run_parser_benchmark(const std::string& geojson_path);
 
 private:
     // Struct to define a single test case for the benchmark

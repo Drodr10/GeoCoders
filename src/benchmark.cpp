@@ -2,7 +2,6 @@
 #include "kdtree.h"
 #include "quadtree.h"
 #include "parser.h"
-#include "binary_parser.h"
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -116,13 +115,13 @@ void Benchmark::run_suite(const std::vector<Restaurant>& data) {
     }
 }
 
-void Benchmark::run_parser_benchmark(const std::string& geojson_path, const std::string& binary_path) {
+void Benchmark::run_parser_benchmark(const std::string& geojson_path) {
     std::cout << "\n--- Parser Benchmark ---\n" << std::endl;
 
     // Time GeoJSON parsing
     auto start_geojson = std::chrono::high_resolution_clock::now();
     GeoJSONParser geojson_parser;
-    auto geojson_data = geojson_parser.parse(geojson_path);
+    auto geojson_data = geojson_parser.parseFromGeoJSON(geojson_path);
     auto end_geojson = std::chrono::high_resolution_clock::now();
     auto geojson_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_geojson - start_geojson);
 
@@ -130,7 +129,7 @@ void Benchmark::run_parser_benchmark(const std::string& geojson_path, const std:
 
     // Time Binary parsing
     auto start_binary = std::chrono::high_resolution_clock::now();
-    auto binary_data = read_restaurants_binary(binary_path);
+    auto geojson_binary_data = geojson_parser.deserializeFromBinary();
     auto end_binary = std::chrono::high_resolution_clock::now();
     auto binary_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_binary - start_binary);
 

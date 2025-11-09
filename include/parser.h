@@ -22,7 +22,7 @@ public:
 
     Result parse(const std::string& filepath) const;
     
-private:
+    // Public in order to be benchmarked
     Result parseFromGeoJSON(const std::string& filepath) const;
 
     void serializeToBinary(const std::vector<Restaurant>& restaurants, double min_lat, double max_lat, double min_long, double max_long) const;

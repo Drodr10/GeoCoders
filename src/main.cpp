@@ -3,7 +3,6 @@
 #include "quadtree.h"
 #include "kdtree.h"
 #include "benchmark.h"
-#include "binary_parser.h"
 
 #include <iostream>
 #include <chrono>
@@ -18,10 +17,6 @@ int main(int /*argc*/, char** /*argv*/) {
         return 1;
     }
     std::cout << "Parsed " << result.restaurants.size() << " restaurants." << std::endl;
-
-    // Create a binary version of the data for parsing benchmark
-    std::cout << "Creating binary data file for benchmark..." << std::endl;
-    geo::write_restaurants_binary("../data/restaurants.bin", result.restaurants);
 
     std::cout << "Building k-d tree..." << std::endl;
     geo::KDTree kdtree;
