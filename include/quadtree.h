@@ -15,7 +15,7 @@ class Quadtree : public SpatialIndex {
 public:
     struct Node;
 
-    Quadtree(const std::vector<Restaurant>& points, double min_lat, double max_lat, double min_long, double max_long);
+    Quadtree(double min_lat, double max_lat, double min_long, double max_long);
 
     ~Quadtree();
 

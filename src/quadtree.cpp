@@ -18,7 +18,7 @@ struct Quadtree::Node {
     double max_long = 0.0;
 };
 
-Quadtree::Quadtree(const std::vector<Restaurant>& points, double min_lat, double max_lat, double min_long, double max_long) {
+Quadtree::Quadtree(double min_lat, double max_lat, double min_long, double max_long) {
     root_ = std::make_unique<Node>();
     root_->min_lat = min_lat;
     root_->max_lat = max_lat;

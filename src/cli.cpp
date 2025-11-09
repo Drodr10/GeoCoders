@@ -81,27 +81,9 @@ void CLI::perform_knn_search(const SpatialIndex& index, const std::string& tree_
 
 void CLI::run_benchmark() {
     Benchmark benchmark;
-    double lat = 33.9313;
-    double lon = -118.3961;
-    int k = 5;
-
-    std::cout << "\nRunning performance comparison benchmark..." << std::endl;
-    
-    // Non-const copies needed for benchmark
-    KDTree kd_copy;
-    Quadtree quad_copy(result_.restaurants, result_.min_lat, result_.max_lat, result_.min_long, result_.max_long);
-
-
-    Benchmark::Result kd_result = benchmark.run(kd_copy, result_.restaurants, lat, lon, k);
-    Benchmark::Result quad_result = benchmark.run(quad_copy, result_.restaurants, lat, lon, k);
-
-    std::cout << "Benchmark Results (" << k << "-NN query at " << lat << ", " << lon << "):" << std::endl;
-    std::cout << "  k-d Tree:" << std::endl;
-    std::cout << "    Build Time: " << kd_result.build_time.count() << " ms" << std::endl;
-    std::cout << "    Query Time: " << kd_result.query_time.count() << " μs" << std::endl;
-    std::cout << "  Quadtree:" << std::endl;
-    std::cout << "    Build Time: " << quad_result.build_time.count() << " ms" << std::endl;
-    std::cout << "    Query Time: " << quad_result.query_time.count() << " μs" << std::endl;
+    std::cout << "\nRunning performance comparison benchmark suite..." << std::endl;
+    benchmark.run_suite(result_.restaurants);
+    benchmark.run_parser_benchmark("../data/restaurants.geojson", "../data/restaurants.bin");
 }
 
 std::string CLI::prompt(const std::string& msg) const {

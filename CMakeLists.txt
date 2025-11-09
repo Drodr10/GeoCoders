@@ -11,7 +11,7 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-add_executable(geoquery src/main.cpp src/kdtree.cpp src/quadtree.cpp src/parser.cpp src/benchmark.cpp src/cli.cpp)
+add_executable(geoquery src/main.cpp src/kdtree.cpp src/quadtree.cpp src/parser.cpp src/benchmark.cpp src/cli.cpp src/binary_parser.cpp)
 
 target_link_libraries(geoquery PRIVATE nlohmann_json::nlohmann_json)
 target_include_directories(geoquery PRIVATE ${PROJECT_SOURCE_DIR}/include)
