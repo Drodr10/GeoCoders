@@ -7,7 +7,7 @@ using json = nlohmann::json;
 namespace geo {
 
 GeoJSONParser::Result GeoJSONParser::parse(const std::string& filepath) const {
-    std::ifstream file("../data/data.bin");
+    std::ifstream file("data/data.bin");
     if (!file.is_open())
         return GeoJSONParser::parseFromGeoJSON(filepath);
     else{
@@ -89,9 +89,9 @@ GeoJSONParser::Result GeoJSONParser::parseFromGeoJSON(const std::string& filepat
 }
 
 void GeoJSONParser::serializeToBinary(const std::vector<Restaurant>& restaurants, double min_lat, double max_lat, double min_long, double max_long) const {
-    std::ofstream file("../data/data.bin", std::ios::binary);
+    std::ofstream file("data/data.bin", std::ios::binary);
     if (!file.is_open()) {
-        throw std::runtime_error("Could not open file for writing: ../data/data.bin");
+        throw std::runtime_error("Could not open file for writing: data/data.bin");
     }
 
     size_t size = restaurants.size();
@@ -118,9 +118,9 @@ void GeoJSONParser::serializeToBinary(const std::vector<Restaurant>& restaurants
 }
 
 GeoJSONParser::Result GeoJSONParser::deserializeFromBinary() const {
-    std::ifstream file("../data/data.bin", std::ios::binary);
+    std::ifstream file("data/data.bin", std::ios::binary);
     if (!file.is_open()) {
-        throw std::runtime_error("Could not open file for reading: ../data/data.bin\nThis should never happen, either something is terribly wrong, or you called the wrong function.");
+        throw std::runtime_error("Could not open file for reading: data/data.bin\nThis should never happen, either something is terribly wrong, or you called the wrong function.");
     }
 
     size_t size;
